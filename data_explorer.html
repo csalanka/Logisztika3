@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Explorer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // CSV registry betöltése
+            $.ajax({
+                url: 'data/csv_registry.csv',
+                dataType: 'text',
+                success: function(data) {
+                    let csvData = [];
+                    let lines = data.split('\n');
+                    for (let i = 0; i < lines.length; i++) {
+                        let columns = lines[i].split(',').map(col => col.trim());
+                        if (columns.length > 1 && columns[0]) { // Üres sorok kiszűrése
+                            let csvFile = columns[0]; // Első oszlop: CSV fájl neve (".csv" nélkül)
+                            let columnsList = columns.slice(1); // Többi oszlop: oszlopnevek
+                            csvData.push({ file: csvFile, columns: columnsList });
+                        }
+                    }
+                    // Adatok átadása az index.html-nek
+                    window.csvRegistry = csvData;
+                    console.log('CSV Registry:', csvData); // Ellenőrzés a konzolban
+                    if (window.parent && window.parent.postMessage) {
+                        window.parent.postMessage({ type: 'csvRegistry', data: csvData }, '*');
+                    }
+                },
+                error: function() {
+                    console.error('Hiba a csv_registry.csv betöltésekor!');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>CSV Data Explorer</h1>
+    <p>Betöltve a csv_registry.csv fájl, az adatok az index.html számára elérhetők.</p>
+</body>
+</html>
