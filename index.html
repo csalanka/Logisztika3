@@ -717,21 +717,19 @@
         }
 
         function loadCsvData(fileName) {
-            const registryEntry = registryData.find(item => item['CSV_fajl'] === fileName);
-            if (!registryEntry) return;
-
-            const columns = Object.keys(registryEntry).filter(key => key !== 'CSV_fajl' && registryEntry[key]);
             const table = document.getElementById(`table-${fileName}`);
             const thead = table.querySelector('thead');
             const tbody = table.querySelector('tbody');
-
-            thead.innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
 
             Papa.parse(`https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/${fileName}.csv`, {
                 download: true,
                 header: true,
                 complete: function(results) {
+                    // Használjuk a CSV fájl saját fejlécét
+                    const columns = results.meta.fields || [];
+                    thead.innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
                     tbody.innerHTML = '';
+
                     results.data.forEach(row => {
                         const tr = document.createElement('tr');
                         columns.forEach(col => {
@@ -744,7 +742,7 @@
                 },
                 error: function(error) {
                     console.error(`Hiba a ${fileName}.csv betöltésekor:`, error);
-                    tbody.innerHTML = '<tr><td colspan="' + columns.length + '">Hiba az adatok betöltésekor.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="100">Hiba az adatok betöltésekor.</td></tr>';
                 }
             });
         }
