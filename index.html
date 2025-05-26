@@ -218,20 +218,7 @@
         #logisztikai-table th:nth-child(18), #logisztikai-table td:nth-child(18) { width: 100px; }
         #logisztikai-table th:nth-child(19), #logisztikai-table td:nth-child(19) { width: 100px; }
         #logisztikai-table th:nth-child(20), #logisztikai-table td:nth-child(20) { width: 100px; }
-        #belső-megrendelési-table th:nth-child(1), #belső-megrendelési-table td:nth-child(1) { width: 150px; }
-        #belső-megrendelési-table th:nth-child(2), #belső-megrendelési-table td:nth-child(2) { width: 150px; }
-        #belső-megrendelési-table th:nth-child(3), #belső-megrendelési-table td:nth-child(3) { width: 150px; }
-        #belső-megrendelési-table th:nth-child(4), #belső-megrendelési-table td:nth-child(4) { width: 150px; }
-        #szallitoi-cimjegyzek-table th:nth-child(1), #szallitoi-cimjegyzek-table td:nth-child(1) { width: 200px; }
-        #szallitoi-cimjegyzek-table th:nth-child(2), #szallitoi-cimjegyzek-table td:nth-child(2) { width: 200px; }
-        #keretrendelesek-table th:nth-child(1), #keretrendelesek-table td:nth-child(1) { width: 150px; }
-        #keretrendelesek-table th:nth-child(2), #keretrendelesek-table td:nth-child(2) { width: 150px; }
-        #keretrendelesek-table th:nth-child(3), #keretrendelesek-table td:nth-child(3) { width: 100px; }
-        #keretrendelesek-table th:nth-child(4), #keretrendelesek-table td:nth-child(4) { width: 100px; }
-        #keretrendelesek-table th:nth-child(5), #keretrendelesek-table td:nth-child(5) { width: 100px; }
-        #keretrendelesek-table th:nth-child(6), #keretrendelesek-table td:nth-child(6) { width: 100px; }
-        #keretrendelesek-table th:nth-child(7), #keretrendelesek-table td:nth-child(7) { width: 150px; }
-        #logisztikai-table th, #belső-megrendelési-table th, #szallitoi-cimjegyzek-table th, #keretrendelesek-table th {
+        #logisztikai-table th, #rendelesi-adatbazis-table th {
             position: sticky;
             top: var(--th-top);
             background-color: #2a2a2a;
@@ -365,9 +352,55 @@
         .csv-file-item:hover {
             background-color: #3c3c3c;
         }
+        /* Sub-tabs stílusok */
+        .sub-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            width: 100%;
+        }
+        .sub-tabs::-webkit-scrollbar {
+            height: 8px;
+        }
+        .sub-tabs::-webkit-scrollbar-thumb {
+            background-color: #621d8a;
+            border-radius: 5px;
+        }
+        .sub-tabs::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
+        }
+        .sub-tab {
+            padding: 8px 16px;
+            background-color: #1a1a1a;
+            border: 1px solid #621d8a;
+            border-radius: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.3s;
+        }
+        .sub-tab.active {
+            background-color: #621d8a;
+            color: #e0e0e0;
+        }
+        .sub-tab:hover {
+            background-color: #2a2a2a;
+        }
+        .sub-tab-content {
+            width: 100%;
+            flex-grow: 1;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            display: none;
+        }
+        .sub-tab-content.active {
+            display: block;
+        }
     </style>
 </head>
-<body onload="toggleFullscreen(); initializeSorszamCounter(); loadBelsőMegrendelésiSzámok(); loadSzallitoiCimjegyzek(); loadKeretrendelesek(); loadRegistryData();"> <div class="container" id="container">
+<body onload="toggleFullscreen(); initializeSorszamCounter(); loadRegistryData();">
+    <div class="container" id="container">
         <div class="header">
             <div class="header-left">
                 <div class="header-left-logo">
@@ -379,16 +412,14 @@
             <div class="header-right">
                 <i class="fas fa-envelope" title="Üzenetek"></i>
                 <i class="fas fa-question-circle" title="Segítség"></i>
-                <span>v1.2.29</span>
+                <span>v1.2.30</span>
                 <i class="fas fa-expand fullscreen-icon" onclick="toggleFullscreen()" title="Teljes képernyő"></i>
             </div>
         </div>
         <div class="divider"></div>
         <div class="tabs">
-            <div class="tab active" onclick="openTab('logisztikai-adatbazis')">Logisztikai adatbázis</div>
-            <div class="tab" onclick="openTab('belső-megrendelési-szamok')">Belső megrendelési számok</div>
-            <div class="tab" onclick="openTab('keretrendelesek')">Keretrendelések</div>
-            <div class="tab" onclick="openTab('szallitoi-cimjegyzek')">Szállítói címjegyzék</div>
+            <div class="tab active" onclick="openTab('rendelesi-lista')">Rendelési lista</div>
+            <div class="tab" onclick="openTab('rendelesi-adatbazis')">Rendelési Adatbázis</div>
             <div class="tab" onclick="openTab('anyagtörzs')">Anyagtörzs</div>
             <div class="tab" onclick="openTab('nyomonkövetési-listák')">Nyomonkövetési listák</div>
             <div class="tab" onclick="openTab('foglalások')">Foglalások</div>
@@ -397,10 +428,10 @@
             <div class="tab" onclick="openTab('felhasználó-kezelés')">Felhasználó kezelés</div>
             <div class="tab" onclick="openTab('hibajelentés-fejlesztési-javaslat')">Hibajelentés Fejlesztési javaslat</div>
             <div class="tab" onclick="openTab('registry-adatok')">Registry adatok</div>
-            </div>
+        </div>
 
-        <div class="tab-content active" id="logisztikai-adatbazis">
-            <h2>Logisztikai adatbázis</h2>
+        <div class="tab-content active" id="rendelesi-lista">
+            <h2>Rendelési lista</h2>
             <button class="new-record-btn" onclick="openNewRecordModal()">Új rekord</button>
             <div class="status-buttons">
                 <button class="status-btn" data-status="felvett" style="background-color: #FFFFFF; color: #000000;">Felvett</button>
@@ -490,66 +521,16 @@
             </div>
         </div>
 
-        <div class="tab-content" id="belső-megrendelési-szamok">
-            <h2>Belső megrendelési számok</h2>
-            <div class="table-container">
-                <table id="belső-megrendelési-table">
-                    <thead>
-                        <tr>
-                            <th>Terület</th>
-                            <th>Gép neve</th>
-                            <th>Belső rendelési szám</th>
-                            <th>SAP költséghely szám</th>
-                        </tr>
-                    </thead>
-                    <tbody id="belső-megrendelési-tbody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="tab-content" id="keretrendelesek">
-            <h2>Keretrendelések</h2>
-            <div class="table-container">
-                <table id="keretrendelesek-table">
-                    <thead>
-                        <tr>
-                            <th>Szállító</th>
-                            <th>Kontírozás/Költséghely</th>
-                            <th>Raktár</th>
-                            <th>Terület</th>
-                            <th>BMIg.</th>
-                            <th>BMIg./Poz</th>
-                            <th>PO</th>
-                        </tr>
-                    </thead>
-                    <tbody id="keretrendelesek-tbody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="tab-content" id="szallitoi-cimjegyzek">
-            <h2>Szállítói címjegyzék</h2>
-            <div class="table-container">
-                <table id="szallitoi-cimjegyzek-table">
-                    <thead>
-                        <tr>
-                            <th>Szállító neve</th>
-                            <th>Ajánlat email cím</th>
-                        </tr>
-                    </thead>
-                    <tbody id="szallitoi-cimjegyzek-tbody">
-                        </tbody>
-                </table>
-            </div>
+        <div class="tab-content" id="rendelesi-adatbazis">
+            <h2>Rendelési Adatbázis</h2>
+            <div class="sub-tabs" id="rendelesi-adatbazis-subtabs"></div>
+            <div class="sub-tab-content-container" id="rendelesi-adatbazis-subcontents"></div>
         </div>
 
         <div class="tab-content" id="registry-adatok">
             <h2>Registry adatok</h2>
             <div class="table-container">
-                <div id="registry-file-list">
-                    </div>
+                <div id="registry-file-list"></div>
             </div>
         </div>
         <div class="tab-content" id="anyagtörzs">
@@ -684,7 +665,7 @@
         let keretrendelesek = [];
         let sorszamCounter = 0;
         let currentRow;
-        let registryData = []; // Új globális változó a registry adatoknak
+        let registryData = [];
 
         function initializeSorszamCounter() {
             const table = document.querySelector('#logisztikai-table tbody');
@@ -702,76 +683,14 @@
             sorszamCounter = maxSorszam;
         }
 
-        // --- Meglévő PapaParse betöltések (nem változott) ---
-        Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/belső_megrendelések_adatbazis.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
-                const data = results.data;
-                teruletekGepek = {};
-
-                data.forEach(item => {
-                    const terulet = item['Terület'] && item['Terület'] !== 'undefined' ? item['Terület'] : '-';
-                    const gepNev = item['Gép neve'] && item['Gép neve'] !== 'undefined' ? item['Gép neve'] : '-';
-                    const rendelesiSzam = item['Belső rendelési szám'] && item['Belső rendelési szám'] !== 'undefined' ? item['Belső rendelési szám'] : '-';
-                    const koltseghelySzam = item['SAP költséghely szám'] && item['SAP költséghely szám'] !== 'undefined' ? item['SAP költséghely szám'] : '-';
-
-                    if (terulet && terulet !== '-') {
-                        if (!teruletekGepek[terulet]) {
-                            teruletekGepek[terulet] = [];
-                        }
-                        teruletekGepek[terulet].push({
-                            nev: gepNev,
-                            rendelesiSzam: rendelesiSzam,
-                            koltseghelySzam: koltseghelySzam
-                        });
-                    }
-                });
-
-                loadBelsőMegrendelésiSzámok();
-            },
-            error: function(error) {
-                console.error('Hiba a belső megrendelések adatbázis betöltésekor:', error);
-                teruletekGepek = {};
-                loadBelsőMegrendelésiSzámok();
-            }
-        });
-
-        Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/szallitoi_cimjegyzek.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
-                szallitoiCimjegyzek = results.data;
-                loadSzallitoiCimjegyzek();
-            },
-            error: function(error) {
-                console.error('Hiba a szállítói címjegyzék betöltésekor:', error);
-                loadSzallitoiCimjegyzek();
-            }
-        });
-
-        Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/keretrendelesek.csv', {
-            download: true,
-            header: true,
-            complete: function(results) {
-                keretrendelesek = results.data;
-                loadKeretrendelesek();
-            },
-            error: function(error) {
-                console.error('Hiba a keretrendelések betöltésekor:', error);
-                loadKeretrendelesek();
-            }
-        });
-
-        // --- ÚJ KÓD: csv_registry.csv betöltése és megjelenítése ---
         function loadRegistryData() {
             Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/csv_registry.csv', {
                 download: true,
                 header: true,
                 complete: function(results) {
-                    // Filter out rows that might have missing 'CSV_fajl' or are empty
-                    registryData = results.data.filter(row => row['CSV_fajl'] && row['CSV_fajl'].trim() !== '');
+                    registryData = results.data.filter(row => row['CSV_fájl'] && row['CSV_fájl'].trim() !== '');
                     displayRegistryFileNames();
+                    loadRendelesiAdatbazisTabs();
                 },
                 error: function(error) {
                     console.error('Hiba a csv_registry.csv betöltésekor:', error);
@@ -783,7 +702,7 @@
 
         function displayRegistryFileNames() {
             const registryList = document.getElementById('registry-file-list');
-            registryList.innerHTML = ''; // Tisztítja a konténert
+            registryList.innerHTML = '';
 
             if (registryData.length === 0) {
                 registryList.innerHTML = '<p>Nincsenek fájlok a registry-ben.</p>';
@@ -791,81 +710,108 @@
             }
 
             registryData.forEach(item => {
-                const fileName = item['CSV_fajl'];
+                const fileName = item['CSV_fájl'];
                 if (fileName) {
                     const fileItem = document.createElement('div');
                     fileItem.classList.add('csv-file-item');
                     fileItem.textContent = fileName;
-                    // Jelenlegi célunk csak a fájlnév megjelenítése, kattintási funkciót most nem adunk hozzá.
                     registryList.appendChild(fileItem);
                 }
             });
         }
-        // --- ÚJ KÓD VÉGE ---
 
+        function loadRendelesiAdatbazisTabs() {
+            const subTabsContainer = document.getElementById('rendelesi-adatbazis-subtabs');
+            const subContentsContainer = document.getElementById('rendelesi-adatbazis-subcontents');
+            subTabsContainer.innerHTML = '';
+            subContentsContainer.innerHTML = '';
 
-        function loadBelsőMegrendelésiSzámok() {
-            const tbody = document.getElementById('belső-megrendelési-tbody');
-            tbody.innerHTML = '';
-
-            for (const terulet in teruletekGepek) {
-                teruletekGepek[terulet].forEach(gep => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${terulet}</td>
-                        <td>${gep.nev}</td>
-                        <td>${gep.rendelesiSzam}</td>
-                        <td>${gep.koltseghelySzam}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
+            if (registryData.length === 0) {
+                subContentsContainer.innerHTML = '<p>Nincsenek adatok a Rendelési Adatbázisban.</p>';
+                return;
             }
-        }
 
-        function loadSzallitoiCimjegyzek() {
-            const tbody = document.getElementById('szallitoi-cimjegyzek-tbody');
-            tbody.innerHTML = '';
+            registryData.sort((a, b) => a['CSV_fájl'].localeCompare(b['CSV_fájl'])); // ABC sorrend
 
-            szallitoiCimjegyzek.forEach(item => {
-                const szallitoNeve = item['Szállító neve'];
-                const email = item['Ajánlat email cím'];
+            registryData.forEach((item, index) => {
+                const fileName = item['CSV_fájl'];
+                const displayName = formatFileName(fileName);
 
-                if (szallitoNeve && email) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${szallitoNeve}</td>
-                        <td>${email}</td>
-                    `;
-                    tbody.appendChild(row);
-                }
+                const subTab = document.createElement('div');
+                subTab.classList.add('sub-tab');
+                if (index === 0) subTab.classList.add('active');
+                subTab.textContent = displayName;
+                subTab.setAttribute('onclick', `openSubTab('${fileName}')`);
+                subTabsContainer.appendChild(subTab);
+
+                const subContent = document.createElement('div');
+                subContent.classList.add('sub-tab-content');
+                subContent.id = `subtab-${fileName}`;
+                if (index === 0) subContent.classList.add('active');
+                subContent.innerHTML = `
+                    <div class="table-container">
+                        <table id="table-${fileName}" class="rendelesi-adatbazis-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                `;
+                subContentsContainer.appendChild(subContent);
+
+                loadCsvData(fileName);
             });
         }
 
-        function loadKeretrendelesek() {
-            const tbody = document.getElementById('keretrendelesek-tbody');
-            tbody.innerHTML = '';
+        function formatFileName(fileName) {
+            const nameMap = {
+                'belső_megrendelések_adatbazis': 'Belső Megrendelések',
+                'keretrendeles': 'Keretrendelések',
+                'gepek_belso_megrendelesek_adatbazis': 'Gépek Belső Megrendelések',
+                'szallitoi_cimjegyzek': 'Szállítói Címjegyzék'
+            };
+            return nameMap[fileName] || fileName.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        }
 
-            keretrendelesek.forEach(item => {
-                const szallito = item['Szállító'] || '-';
-                const kontirozas = item['Kontírozás/Költséghely'] || '-';
-                const raktar = item['Raktár'] || '-';
-                const terulet = item['Terület'] || '-';
-                const bmig = item['BMIg.'] || '-';
-                const bmigPoz = item['BMIg./Poz'] || '-';
-                const po = item['PO'] || '-';
+        function openSubTab(fileName) {
+            const subTabs = document.querySelectorAll('.sub-tab');
+            const subContents = document.querySelectorAll('.sub-tab-content');
 
-                if (szallito !== '-') {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${szallito}</td>
-                        <td>${kontirozas}</td>
-                        <td>${raktar}</td>
-                        <td>${terulet}</td>
-                        <td>${bmig}</td>
-                        <td>${bmigPoz}</td>
-                        <td>${po}</td>
-                    `;
-                    tbody.appendChild(row);
+            subTabs.forEach(tab => tab.classList.remove('active'));
+            subContents.forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.sub-tab[onclick="openSubTab('${fileName}')"]`).classList.add('active');
+            document.getElementById(`subtab-${fileName}`).classList.add('active');
+        }
+
+        function loadCsvData(fileName) {
+            const registryEntry = registryData.find(item => item['CSV_fájl'] === fileName);
+            if (!registryEntry) return;
+
+            const columns = Object.keys(registryEntry).filter(key => key !== 'CSV_fájl' && registryEntry[key]);
+            const table = document.getElementById(`table-${fileName}`);
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+
+            thead.innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+
+            Papa.parse(`https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/${fileName}.csv`, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    tbody.innerHTML = '';
+                    results.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        columns.forEach(col => {
+                            const td = document.createElement('td');
+                            td.textContent = row[col] || '-';
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                },
+                error: function(error) {
+                    console.error(`Hiba a ${fileName}.csv betöltésekor:`, error);
+                    tbody.innerHTML = '<tr><td colspan="' + columns.length + '">Hiba az adatok betöltésekor.</td></tr>';
                 }
             });
         }
@@ -972,23 +918,12 @@
                     teruletSelect.appendChild(option);
                 });
 
-                const gepSelect = document.createElement('select');
-                gepSelect.id = 'new-gep';
-                gepSelect.name = 'new-gep';
-                gepSelect.onchange = updateKontirozasValue;
-
-                const gepOptionDefault = document.createElement('option');
-                gepOptionDefault.value = '';
-                gepOptionDefault.textContent = 'Válassz gépet';
-                gepSelect.appendChild(gepOptionDefault);
-
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.id = 'new-kontirozas';
                 hiddenInput.name = 'new-kontirozas';
 
                 kontirozasContainer.appendChild(teruletSelect);
-                kontirozasContainer.appendChild(gepSelect);
                 kontirozasContainer.appendChild(hiddenInput);
             } else if (rendelesTipus === '4') {
                 const teruletSelect = document.createElement('select');
@@ -1028,6 +963,7 @@
         function updateGepSelect() {
             const terulet = document.getElementById('new-terulet').value;
             const gepSelect = document.getElementById('new-gep');
+            if (!gepSelect) return;
             gepSelect.innerHTML = '';
 
             const gepOptionDefault = document.createElement('option');
@@ -1094,7 +1030,7 @@
             sorszamCounter++;
             const formattedSorszam = `FR25#${sorszamCounter.toString().padStart(4, '0')}`;
 
-            const table = document.querySelector('#logisztikai-table tbody');
+            const table = document.querySelector('#logisztrendszámítás-table tbody');
             const row = document.createElement('tr');
             row.setAttribute('data-ajanlatkikuldve', 'false');
             row.innerHTML = `
@@ -1130,28 +1066,20 @@
             const rowIndex = Array.from(currentRow.parentElement.children).indexOf(currentRow);
 
             document.getElementById('edit-row-index').value = rowIndex;
-            // A rendelesTipus beállítása a kontírozás alapján nem mindig pontos,
-            // mivel több típus is lehet üres kontírozással.
-            // Átmenetileg a '2' (Anyagszámos rendelés) az alapértelmezett, ha nem gép vagy terület.
             const kontirozasText = currentRow.cells[5].textContent;
-            let currentRendelesTipus = '2'; // Alapértelmezett
+            let currentRendelesTipus = '2';
             if (Object.values(teruletekGepek).some(gepek => gepek.some(g => g.rendelesiSzam === kontirozasText || g.koltseghelySzam === kontirozasText))) {
-                 // Megpróbáljuk kitalálni, hogy gép vagy terület kontírozás-e
-                 // Ez a logika itt lehet, hogy további finomítást igényelne a pontosabb azonosításhoz
-                 // Például a kontírozási név (6. oszlop) is segíthetne.
-                 if (currentRow.cells[6].textContent !== '-' && currentRow.cells[6].textContent !== '') {
-                     currentRendelesTipus = '3'; // Gépre kontírozott (mert van kontírozási név)
-                 } else {
-                     currentRendelesTipus = '4'; // Területre kontírozott (nincs kontírozási név, de van kontírozás)
-                 }
+                if (currentRow.cells[6].textContent !== '-' && currentRow.cells[6].textContent !== '') {
+                    currentRendelesTipus = '3';
+                } else {
+                    currentRendelesTipus = '4';
+                }
             }
             document.getElementById('edit-rendeles-tipus').value = currentRendelesTipus;
-
 
             updateEditRaktarField();
             updateEditKontirozasField();
 
-            // Ha gép vagy terület, megpróbáljuk kiválasztani a megfelelő optiont
             if (currentRendelesTipus === '3' || currentRendelesTipus === '4') {
                 const selectedTerulet = Object.keys(teruletekGepek).find(terulet =>
                     teruletekGepek[terulet].some(gep =>
@@ -1169,7 +1097,6 @@
                     }
                 }
             }
-
 
             document.getElementById('edit-raktar').value = currentRow.cells[4].textContent;
             document.getElementById('edit-kontirozas').value = currentRow.cells[5].textContent;
