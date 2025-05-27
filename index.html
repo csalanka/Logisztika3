@@ -3,236 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logisztikai Adatbázis</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Siemens Energy Ikon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
+        :root {
+            --table-container-padding-top: 0px;
+            --th-top: 0px;
+        }
         body {
-            font-family: Arial, sans-serif;
+            background-color: #000000;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            border: 2px solid #621d8a;
+            border-radius: 10px;
+            position: relative;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            align-items: flex-start;
+            padding: 10px;
+            box-sizing: border-box;
+            padding-top: 180px;
+            overflow: hidden;
         }
         .header {
-            background-color: #333;
-            color: white;
-            padding: 15px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            background-color: #000000;
+            z-index: 10;
+        }
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+        .header-left-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header img {
+            width: 128px;
+            height: 70px;
+        }
+        .logo-note {
+            font-size: 10px;
+            color: #e0e0e0;
             text-align: center;
-            font-size: 24px;
+            width: 100%;
+        }
+        .copyright-note {
+            font-size: 10px;
+            color: #e0e0e0;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right: 20px;
+        }
+        .header-right span, .header-right i {
+            font-size: 14px;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+        .header-right i:hover, .fullscreen-icon:hover {
+            color: #621d8a;
+        }
+        .fullscreen-icon {
+            font-size: 16px;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+        .divider {
+            width: 100%;
+            height: 2px;
+            background-color: #621d8a;
+            margin: 0;
+            position: fixed;
+            top: 110px;
+            z-index: 9;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            position: fixed;
+            top: 120px;
+            z-index: 9;
+            overflow-x: auto;
+            width: calc(100% - 40px);
+        }
+        .tabs::-webkit-scrollbar {
+            height: 8px;
+        }
+        .tabs::-webkit-scrollbar-thumb {
+            background-color: #621d8a;
+            border-radius: 5px;
+        }
+        .tabs::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
         }
         .tab {
-            display: flex;
-            background-color: #444;
-            padding: 10px 0;
-            justify-content: center;
-        }
-        .tab button {
-            background-color: #555;
-            color: white;
             padding: 10px 20px;
-            border: none;
+            background-color: #1a1a1a;
+            border: 1px solid #621d8a;
+            border-radius: 5px;
             cursor: pointer;
-            margin: 0 5px;
-            font-size: 16px;
+            white-space: nowrap;
+            transition: background-color 0.3s;
         }
-        .tab button:hover {
-            background-color: #666;
+        .tab.active {
+            background-color: #621d8a;
+            color: #e0e0e0;
         }
-        .tab button.active {
-            background-color: #777;
+        .tab:hover {
+            background-color: #2a2a2a;
         }
         .tab-content {
-            display: none;
+            width: 100%;
+            flex-grow: 1;
             padding: 20px;
-            background-color: white;
-            margin: 20px;
+            background-color: #1a1a1a;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            flex: 1;
+            height: calc(100vh - 160px);
+            box-sizing: border-box;
+            display: none;
         }
         .tab-content.active {
             display: block;
         }
-        .input-container {
-            margin-bottom: 20px;
-        }
-        .input-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .input-container input, .input-container textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .button-container {
-            text-align: center;
-        }
-        .button-container button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .button-container button:hover {
-            background-color: #45a049;
-        }
-        #registry-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        #registry-file-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
-        .csv-file-item {
-            padding: 5px;
-            cursor: pointer;
-        }
-        .csv-file-item:hover {
-            background-color: #ddd;
-        }
-        .csv-file-content {
-            display: none;
-        }
-        .csv-file-content.active {
-            display: block;
-        }
         .table-container {
+            width: 100%;
+            max-height: calc(100vh - 200px);
+            min-height: calc(100vh - 200px);
             overflow-x: auto;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            will-change: transform;
+            padding-top: var(--table-container-padding-top);
+            padding-right: 17px;
+            position: relative;
+        }
+        .table-container::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #621d8a;
+            border-radius: 5px;
+            min-height: 20px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background-color: #2a2a2a;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
+            margin-top: -2px;
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #621d8a;
             text-align: left;
+            white-space: nowrap;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #2a2a2a;
+            position: sticky;
+            top: var(--th-top);
+            z-index: 3;
+            height: 40px;
+            line-height: 40px;
         }
-        #registry-close-btn {
-            display: none;
-            background-color: #ff4444;
-            margin-top: 10px;
+        tr:nth-child(even) {
+            background-color: #222222;
         }
-        #registry-search {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 10px;
-        }
-        #fullscreen-btn {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #555;
-            color: white;
+        .edit-btn, .new-record-btn {
+            padding: 5px 10px;
+            background-color: #621d8a;
             border: none;
+            border-radius: 5px;
+            color: #e0e0e0;
+            cursor: pointer;
+            margin: 2px;
+            position: relative;
+            z-index: 10001;
+        }
+        .modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: center;
+            border: 1px solid #621d8a;
+            box-sizing: border-box;
+        }
+        .new-record-form, .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+        .edit-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+        }
+        .edit-form h3 {
+            grid-column: 1 / 3;
+            margin-top: 10px;
+            border-bottom: 1px solid #621d8a;
+            padding-bottom: 5px;
+        }
+        .edit-form label, .edit-form input, .edit-form select {
+            display: block;
+            width: 100%;
+        }
+        .edit-form button {
+            grid-column: 1 / 3;
+        }
+        .new-record-form label, .edit-form label {
+            font-weight: bold;
+            text-align: left;
+        }
+        .new-record-form input, .new-record-form select, .edit-form input, .edit-form select {
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3c3c3c;
+            color: #e0e0e0;
+        }
+        .new-record-form button, .edit-form button {
             padding: 10px;
+            background-color: #621d8a;
+            border: none;
+            border-radius: 5px;
+            color: #e0e0e0;
             cursor: pointer;
         }
-        #fullscreen-btn:hover {
-            background-color: #666;
+        .send-email-btn {
+            background-color: #4CAF50;
+        }
+        #email-result {
+            margin-top: 10px;
+            color: #4CAF50;
+        }
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: default;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        .status-btn:hover {
+            opacity: 1;
+        }
+        .fa-envelope.sent {
+            color: #4CAF50;
+        }
+        .fa-envelope.not-sent {
+            color: #808080;
+        }
+        .csv-file-item {
+            padding: 8px 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #621d8a;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .csv-file-item:hover {
+            background-color: #3c3c3c;
+        }
+        .csv-file-content {
+            display: none;
+            margin-top: 20px;
+        }
+        .csv-file-content.active {
+            display: block;
+        }
+        .registry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .close-btn {
+            background-color: #621d8a;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .close-btn:hover {
+            background-color: #7a2ca3;
+        }
+        #registry-search {
+            padding: 8px;
+            border: 1px solid #621d8a;
+            border-radius: 5px;
+            background-color: #3c3c3c;
+            color: #e0e0e0;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        #registry-search::placeholder {
+            color: #808080;
         }
     </style>
 </head>
 <body onload="toggleFullscreen(); initializeSorszamCounter(); loadRegistryData();">
-    <div class="header">SIEMENS ENERGIA</div>
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Logisztikai adatbázis')">Logisztikai adatbázis</button>
-        <button class="tablinks" onclick="openTab(event, 'Anyagátörzs')">Anyagátörzs</button>
-        <button class="tablinks" onclick="openTab(event, 'Nyomtatványok')">Nyomtatványok</button>
-    </div>
-
-    <div id="Logisztikai adatbázis" class="tab-content">
-        <div class="input-container">
-            <label for="sorszam">Sorszám:</label>
-            <input type="text" id="sorszam" readonly>
+    <div class="container" id="container">
+        <div class="header">
+            <div class="header-left">
+                <div class="header-left-logo">
+                    <img src="siemens-energy-logo.png" alt="Siemens Energy Logo">
+                    <span class="copyright-note">© 2025 [A Neved]. Minden jog fenntartva. Engedély nélküli felhasználás tilos.</span>
+                </div>
+                <span class="logo-note">Ideiglenes logó, hamarosan változik</span>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-envelope" title="Üzenetek"></i>
+                <i class="fas fa-question-circle" title="Segítség"></i>
+                <span>v1.2.30</span>
+                <i class="fas fa-expand fullscreen-icon" onclick="toggleFullscreen()" title="Teljes képernyő"></i>
+            </div>
         </div>
-        <div class="input-container">
-            <label for="datum">Dátum:</label>
-            <input type="date" id="datum">
+        <div class="divider"></div>
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('logisztikai-adatbazis')">Logisztikai adatbázis</div>
+            <div class="tab" onclick="openTab('anyagtörzs')">Anyagtörzs</div>
+            <div class="tab" onclick="openTab('nyomtatvanyok')">Nyomtatványok</div>
+            <div class="tab" onclick="openTab('registry-adatok')">Registry adatok</div>
         </div>
-        <div class="input-container">
-            <label for="megjegyzes">Megjegyzés:</label>
-            <textarea id="megjegyzes" rows="4"></textarea>
+
+        <div class="tab-content active" id="logisztikai-adatbazis">
+            <h2>Logisztikai adatbázis</h2>
+            <button class="new-record-btn" onclick="openNewRecordModal()">Új rekord</button>
+            <div class="status-buttons">
+                <button class="status-btn" data-status="felvett" style="background-color: #FFFFFF; color: #000000;">Felvett</button>
+                <button class="status-btn" data-status="ajanlatkikuldve" style="background-color: #FFFF00; color: #000000;">Ajánlatkérés kiküldve</button>
+                <button class="status-btn" data-status="belsoszam" style="background-color: #808080; color: #FFFFFF;">Belső igényszám kitöltve</button>
+                <button class="status-btn" data-status="po" style="background-color: #0000FF; color: #FFFFFF;">PO szám létrehozva</button>
+                <button class="status-btn" data-status="beerkezett" style="background-color: #008000; color: #FFFFFF;">Tétel beérkezett</button>
+                <button class="status-btn" data-status="megszakitva" style="background-color: #000000; color: #FFFFFF;">Megszakítva</button>
+            </div>
+            <div class="table-container">
+                <table id="logisztikai-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th>Műveleti</th>
+                            <th>Sr.</th>
+                            <th>Felvéve</th>
+                            <th>Raktár</th>
+                            <th>Kontírozás</th>
+                            <th>Kontírozási név</th>
+                            <th>Ak.</th>
+                            <th>Megnevezés</th>
+                            <th>Folyamat</th>
+                            <th>Szállító</th>
+                            <th>Sz.kód</th>
+                            <th>Ajánlatszám</th>
+                            <th>Mennyiség</th>
+                            <th>Egység</th>
+                            <th>Ár</th>
+                            <th>EUR/HUF</th>
+                            <th>BMIg.</th>
+                            <th>PO</th>
+                            <th>T.Szállítás</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ajanlatkikuldve="false">
+                            <td><input type="checkbox" class="select-row"></td>
+                            <td>
+                                <button class="edit-btn" onclick="openEditModal(this)">Szerkesztés</button>
+                            </td>
+                            <td>FR25#0001</td>
+                            <td>2025.03.01</td>
+                            <td>0060</td>
+                            <td>2025.03.02</td>
+                            <td>-</td>
+                            <td><i class="fas fa-envelope not-sent" title="Levél küldése" onclick="sendEmailFromTable(this)"></i></td>
+                            <td>Csavar M8</td>
+                            <td>Beszerzés</td>
+                            <td>Szállító 1</td>
+                            <td>001</td>
+                            <td>AJ123</td>
+                            <td>100</td>
+                            <td>DB.</td>
+                            <td>50</td>
+                            <td>EUR</td>
+                            <td>2025.03.10</td>
+                            <td>PO123</td>
+                            <td>2025.03.15</td>
+                        </tr>
+                        <tr data-ajanlatkikuldve="false">
+                            <td><input type="checkbox" class="select-row"></td>
+                            <td>
+                                <button class="edit-btn" onclick="openEditModal(this)">Szerkesztés</button>
+                            </td>
+                            <td>FR25#0002</td>
+                            <td>2025.03.02</td>
+                            <td>0350</td>
+                            <td>2025.03.03</td>
+                            <td>-</td>
+                            <td><i class="fas fa-envelope not-sent" title="Levél küldése" onclick="sendEmailFromTable(this)"></i></td>
+                            <td>Alátét M8</td>
+                            <td>Gyártás</td>
+                            <td>Szállító 2</td>
+                            <td>002</td>
+                            <td>AJ124</td>
+                            <td>200</td>
+                            <td>DB.</td>
+                            <td>30</td>
+                            <td>HUF</td>
+                            <td>2025.03.12</td>
+                            <td>PO124</td>
+                            <td>2025.03.18</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="button-container">
-            <button onclick="saveData()">Mentés</button>
+
+        <div class="tab-content" id="anyagtörzs">
+            <h2>Anyagtörzs</h2>
+            <p>Itt lesz az Anyagtörzs tartalma.</p>
+        </div>
+
+        <div class="tab-content" id="nyomtatvanyok">
+            <h2>Nyomtatványok</h2>
+            <p>Itt lesz a Nyomtatványok tartalma.</p>
+        </div>
+
+        <div class="tab-content" id="registry-adatok">
+            <div class="registry-header">
+                <h2>Registry adatok</h2>
+                <button class="close-btn" id="registry-close-btn" onclick="hideActiveCsvContent()" style="display: none;">Bezárás</button>
+            </div>
+            <input type="text" id="registry-search" placeholder="Keresés a táblázatban...">
+            <div class="table-container">
+                <div id="registry-file-list"></div>
+                <div id="csv-file-content-container"></div>
+            </div>
+        </div>
+
+        <div class="modal" id="newRecordModal" style="display: none;">
+            <div class="modal-content">
+                <div class="new-record-form" id="newRecordForm">
+                    <h2>Új rekord</h2>
+                    <label for="rendeles-tipus">Rendeléstípus:</label>
+                    <select id="rendeles-tipus" onchange="updateRaktarField(); updateKontirozasField();">
+                        <option value="1">Keretrendelés</option>
+                        <option value="2" selected>Anyagszámos rendelés</option>
+                        <option value="3">Gépre kontírozott rendelés</option>
+                        <option value="4">Területre kontírozott rendelés</option>
+                        <option value="5">Beruházás</option>
+                    </select>
+                    <label for="new-raktar">Raktár:</label>
+                    <div id="raktar-container"></div>
+                    <label for="new-kontirozas">Kontírozás:</label>
+                    <div id="kontirozas-container"></div>
+                    <label for="new-megnevezes">Megnevezés:</label>
+                    <input type="text" id="new-megnevezes" required>
+                    <label for="new-folyamat">Folyamat:</label>
+                    <select id="new-folyamat">
+                        <option value="Beszerzés">Beszerzés</option>
+                        <option value="Gyártás">Gyártás</option>
+                    </select>
+                    <label for="new-szallito">Szállító:</label>
+                    <input type="text" id="new-szallito" required>
+                    <label for="new-mennyiseg">Mennyiség:</label>
+                    <input type="number" id="new-mennyiseg" required>
+                    <label for="new-egyseg">Egység:</label>
+                    <select id="new-egyseg">
+                        <option value="DB.">DB.</option>
+                        <option value="KG">KG</option>
+                        <option value="M">M</option>
+                    </select>
+                    <button type="button" onclick="saveNewRecord()">Mentés</button>
+                    <button type="button" onclick="closeModal('newRecordModal')">Bezárás</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="editModal" style="display: none;">
+            <div class="modal-content">
+                <div class="edit-form" id="editForm">
+                    <h2 style="grid-column: 1 / 3;">Szerkesztés</h2>
+                    <input type="hidden" id="edit-row-index">
+                    <label for="edit-rendeles-tipus">Rendeléstípus:</label>
+                    <select id="edit-rendeles-tipus" onchange="updateEditRaktarField(); updateEditKontirozasField();">
+                        <option value="1">Keretrendelés</option>
+                        <option value="2">Anyagszámos rendelés</option>
+                        <option value="3">Gépre kontírozott rendelés</option>
+                        <option value="4">Területre kontírozott rendelés</option>
+                        <option value="5">Beruházás</option>
+                    </select>
+                    <label for="edit-raktar">Raktár:</label>
+                    <div id="edit-raktar-container"></div>
+                    <label for="edit-kontirozas">Kontírozás:</label>
+                    <div id="edit-kontirozas-container"></div>
+                    <label for="edit-megnevezes">Megnevezés:</label>
+                    <input type="text" id="edit-megnevezes" required>
+                    <label for="edit-folyamat">Folyamat:</label>
+                    <select id="edit-folyamat">
+                        <option value="Beszerzés">Beszerzés</option>
+                        <option value="Gyártás">Gyártás</option>
+                    </select>
+                    <label for="edit-szallito">Szállító:</label>
+                    <input type="text" id="edit-szallito" required>
+                    <label for="edit-ajanlatszam">Ajánlatszám:</label>
+                    <input type="text" id="edit-ajanlatszam">
+                    <label for="edit-mennyiseg">Mennyiség:</label>
+                    <input type="number" id="edit-mennyiseg" required>
+                    <label for="edit-egyseg">Egység:</label>
+                    <select id="edit-egyseg">
+                        <option value="DB.">DB.</option>
+                        <option value="KG">KG</option>
+                        <option value="M">M</option>
+                    </select>
+                    <label for="edit-ar">Ár:</label>
+                    <input type="number" id="edit-ar">
+                    <label for="edit-eur-huf">EUR/HUF:</label>
+                    <select id="edit-eur-huf">
+                        <option value="EUR">EUR</option>
+                        <option value="HUF">HUF</option>
+                    </select>
+                    <label for="edit-bmig">BMIg.:</label>
+                    <input type="text" id="edit-bmig">
+                    <label for="edit-po">PO:</label>
+                    <input type="text" id="edit-po">
+                    <label for="edit-t-szallitas">T.Szállítás:</label>
+                    <input type="date" id="edit-t-szallitas">
+                    <button type="button" onclick="saveEdit()">Mentés</button>
+                    <button type="button" onclick="closeModal('editModal')">Bezárás</button>
+                    <button type="button" class="send-email-btn" onclick="sendEmail()">Levél küldése</button>
+                    <div id="email-result"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="Anyagátörzs" class="tab-content">
-        <p>Anyagátörzs tartalom...</p>
-    </div>
-
-    <div id="Nyomtatványok" class="tab-content">
-        <p>Nyomtatványok tartalom...</p>
-    </div>
-
-    <div id="registry-container" class="tab-content">
-        <input type="text" id="registry-search" placeholder="Keresés..." onkeyup="searchRegistry()">
-        <div id="registry-file-list"></div>
-        <div id="csv-file-content-container"></div>
-        <button id="registry-close-btn" onclick="hideCsvContent()">Bezárás</button>
-    </div>
-
-    <button id="fullscreen-btn" onclick="toggleFullscreen()">Teljes képernyő</button>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script>
-        let registryData = [];
+        let teruletekGepek = {};
+        let szallitoiCimjegyzek = [];
+        let keretrendelesek = [];
         let sorszamCounter = 0;
-
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
+        let currentRow;
+        let registryData = [];
 
         function initializeSorszamCounter() {
-            const savedCounter = localStorage.getItem('sorszamCounter');
-            sorszamCounter = savedCounter ? parseInt(savedCounter) : 0;
-            document.getElementById('sorszam').value = sorszamCounter;
-        }
+            const table = document.querySelector('#logisztikai-table tbody');
+            const rows = table.querySelectorAll('tr');
+            let maxSorszam = 0;
 
-        function saveData() {
-            const datum = document.getElementById('datum').value;
-            const megjegyzes = document.getElementById('megjegyzes').value;
-            if (datum && megjegyzes) {
-                sorszamCounter++;
-                document.getElementById('sorszam').value = sorszamCounter;
-                localStorage.setItem('sorszamCounter', sorszamCounter);
-                alert('Adatok mentve! Sorszám: ' + sorszamCounter + ', Dátum: ' + datum + ', Megjegyzés: ' + megjegyzes);
-                document.getElementById('datum').value = '';
-                document.getElementById('megjegyzes').value = '';
-            } else {
-                alert('Kérlek, töltsd ki az összes mezőt!');
-            }
+            rows.forEach(row => {
+                const sorszamText = row.cells[2].textContent;
+                const sorszam = parseInt(sorszamText.replace('FR25#', ''));
+                if (!isNaN(sorszam) && sorszam > maxSorszam) {
+                    maxSorszam = sorszam;
+                }
+            });
+
+            sorszamCounter = maxSorszam;
         }
 
         function loadRegistryData() {
-            Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/csv_registry.csv', {
+            Papa.parse('https://raw.githubusercontent.com/csalanka/Logisztika3/main/data/csv_registry.csv', {
                 download: true,
                 header: true,
                 complete: function(results) {
@@ -295,58 +686,6 @@
             });
         }
 
-        function loadCsvData(fileName) {
-            Papa.parse(`https://raw.githubusercontent.com/csalanka/Logisztika2/main/data/${fileName}`, {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    console.log(`Betöltött CSV adatok: ${fileName}`, results.data);
-                    if (results.data.length === 0) {
-                        console.warn(`${fileName} üres vagy hibás.`);
-                    }
-                    const table = document.getElementById(`table-${fileName}`);
-                    const thead = table.querySelector('thead');
-                    const tbody = table.querySelector('tbody');
-                    thead.innerHTML = '';
-                    tbody.innerHTML = '';
-
-                    if (results.data.length > 0) {
-                        const headers = Object.keys(results.data[0]);
-                        const headerRow = document.createElement('tr');
-                        headers.forEach(header => {
-                            const th = document.createElement('th');
-                            th.textContent = header;
-                            headerRow.appendChild(th);
-                        });
-                        thead.appendChild(headerRow);
-
-                        results.data.forEach(row => {
-                            const tr = document.createElement('tr');
-                            headers.forEach(header => {
-                                const td = document.createElement('td');
-                                td.textContent = row[header] || '';
-                                tr.appendChild(td);
-                            });
-                            tbody.appendChild(tr);
-                        });
-                    } else {
-                        const tr = document.createElement('tr');
-                        const td = document.createElement('td');
-                        td.textContent = 'Nincs adat a CSV-ben.';
-                        td.colSpan = 4;
-                        tr.appendChild(td);
-                        tbody.appendChild(tr);
-                    }
-                },
-                error: function(error) {
-                    console.error(`Hiba a ${fileName} betöltésekor:`, error);
-                    const table = document.getElementById(`table-${fileName}`);
-                    const tbody = table.querySelector('tbody');
-                    tbody.innerHTML = `<tr><td colspan="4">Hiba a CSV betöltésekor: ${error.message}</td></tr>`;
-                }
-            });
-        }
-
         function showCsvContent(fileName) {
             const contents = document.querySelectorAll('.csv-file-content');
             contents.forEach(content => content.classList.remove('active'));
@@ -370,26 +709,398 @@
             if (contentDiv) {
                 contentDiv.classList.remove('active');
                 document.getElementById('registry-close-btn').style.display = 'none';
+                document.getElementById('registry-search').value = '';
             }
         }
 
-        function searchRegistry() {
-            const input = document.getElementById('registry-search').value.toLowerCase();
-            const fileItems = document.getElementsByClassName('csv-file-item');
-            Array.from(fileItems).forArray((item) => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(input) ? '' : 'none';
+        function hideActiveCsvContent() {
+            const activeContent = document.querySelector('.csv-file-content.active');
+            if (activeContent) {
+                const fileName = activeContent.id.replace('content-', '');
+                hideCsvContent(fileName);
+            }
+        }
+
+        function loadCsvData(fileName) {
+            const table = document.getElementById(`table-${fileName}`);
+            if (!table) return;
+
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+
+            Papa.parse(`https://raw.githubusercontent.com/csalanka/Logisztika3/main/data/${fileName}.csv`, {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    const columns = results.meta.fields || [];
+                    thead.innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+                    tbody.innerHTML = '';
+
+                    results.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        columns.forEach(col => {
+                            const td = document.createElement('td');
+                            td.textContent = row[col] || '-';
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                },
+                error: function(error) {
+                    console.error(`Hiba a ${fileName}.csv betöltésekor:`, error);
+                    tbody.innerHTML = '<tr><td colspan="100">Hiba az adatok betöltésekor.</td></tr>';
+                }
             });
         }
 
+        document.getElementById('registry-search').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const activeContent = document.querySelector('.csv-file-content.active');
+            if (!activeContent) return;
+
+            const tableBody = activeContent.querySelector('tbody');
+            const rows = tableBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                let rowText = '';
+                for (let i = 0; i < row.cells.length; i++) {
+                    rowText += row.cells[i].textContent.toLowerCase() + ' ';
+                }
+
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName !== 'registry-adatok') {
+                document.getElementById('registry-close-btn').style.display = 'none';
+                const contents = document.querySelectorAll('.csv-file-content');
+                contents.forEach(content => content.classList.remove('active'));
+                document.getElementById('registry-search').value = '';
+            }
+        }
+
         function toggleFullscreen() {
+            const container = document.getElementById('container');
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error('Hiba a teljes képernyős mód bekapcsolása során:', err);
+                container.requestFullscreen().catch(err => {
+                    console.log(`Hiba a teljes képernyőre váltáskor: ${err}`);
                 });
             } else {
                 document.exitFullscreen();
             }
+
+            requestAnimationFrame(() => {
+                const newRecordBtn = document.querySelector('.new-record-btn');
+                if (newRecordBtn) {
+                    newRecordBtn.removeEventListener('click', openNewRecordModal);
+                    newRecordBtn.addEventListener('click', () => openNewRecordModal());
+                }
+
+                const editButtons = document.querySelectorAll('.edit-btn');
+                editButtons.forEach(btn => {
+                    btn.removeEventListener('click', openEditModal);
+                    btn.addEventListener('click', () => openEditModal(btn));
+                });
+            });
+        }
+
+        function openNewRecordModal() {
+            const modal = document.getElementById('newRecordModal');
+            modal.style.display = 'flex';
+            updateRaktarField();
+            updateKontirozasField();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('email-result').textContent = '';
+        }
+
+        function updateRaktarField() {
+            const rendelesTipus = document.getElementById('rendeles-tipus').value;
+            const raktarContainer = document.getElementById('raktar-container');
+            raktarContainer.innerHTML = '';
+
+            let options = [];
+            if (rendelesTipus === '1') {
+                options = ['0060', '0350', '0560', '0110'];
+            } else if (rendelesTipus === '2') {
+                options = ['0060', '0350', '0110', '0560'];
+            } else if (rendelesTipus === '3') {
+                options = ['0060', '0350', '0110', '0560'];
+            } else if (rendelesTipus === '4') {
+                options = ['0060', '0350', "0110", '0560'];
+            } else if (rendelesTipus === '5') {
+                options = ['0060', '0350', '0110', '0560'];
+            }
+
+            const select = document.createElement('select');
+            select.id = 'new-raktar';
+            select.name = 'new-raktar';
+            select.required = true;
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+            raktarContainer.appendChild(select);
+        }
+
+        function updateKontirozasField() {
+            const rendelesTipus = document.getElementById('rendeles-tipus').value;
+            const kontirozasContainer = document.getElementById('kontirozas-container');
+            kontirozasContainer.innerHTML = '';
+
+            if (rendelesTipus === '3') {
+                const teruletSelect = document.createElement('select');
+                teruletSelect.id = 'new-terulet';
+                teruletSelect.name = 'new-terulet';
+                teruletSelect.required = true;
+                teruletSelect.innerHTML = `
+                    <option value="Terület 1">Terület 1</option>
+                    <option value="Terület 2">Terület 2</option>
+                `;
+                teruletSelect.onchange = updateGepField;
+                kontirozasContainer.appendChild(teruletSelect);
+
+                const gepContainer = document.createElement('div');
+                gepContainer.id = 'gep-container';
+                kontirozasContainer.appendChild(gepContainer);
+                updateGepField();
+            } else {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'new-kontirozas';
+                input.name = 'new-kontirozas';
+                input.required = true;
+                kontirozasContainer.appendChild(input);
+            }
+        }
+
+        function updateGepField() {
+            const terulet = document.getElementById('new-terulet').value;
+            const gepContainer = document.getElementById('gep-container');
+            gepContainer.innerHTML = '';
+
+            const gepSelect = document.createElement('select');
+            gepSelect.id = 'new-gep';
+            gepSelect.name = 'new-gep';
+            gepSelect.required = true;
+            const gepek = teruletekGepek[terulet] || ['Gép 1', 'Gép 2'];
+            gepek.forEach(gep => {
+                const opt = document.createElement('option');
+                opt.value = gep;
+                opt.textContent = gep;
+                gepSelect.appendChild(opt);
+            });
+            gepContainer.appendChild(gepSelect);
+        }
+
+        function saveNewRecord() {
+            const rendelesTipus = document.getElementById('rendeles-tipus').value;
+            const raktar = document.getElementById('new-raktar').value;
+            const kontirozas = rendelesTipus === '3' ? `${document.getElementById('new-terulet').value} - ${document.getElementById('new-gep').value}` : document.getElementById('new-kontirozas').value;
+            const megnevezes = document.getElementById('new-megnevezes').value;
+            const folyamat = document.getElementById('new-folyamat').value;
+            const szallito = document.getElementById('new-szallito').value;
+            const mennyiseg = document.getElementById('new-mennyiseg').value;
+            const egyseg = document.getElementById('new-egyseg').value;
+
+            sorszamCounter++;
+            const sorszam = `FR25#${String(sorszamCounter).padStart(4, '0')}`;
+            const felveveDatum = new Date().toISOString().split('T')[0];
+
+            const tableBody = document.querySelector('#logisztikai-table tbody');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-ajanlatkikuldve', 'false');
+            newRow.innerHTML = `
+                <td><input type="checkbox" class="select-row"></td>
+                <td><button class="edit-btn" onclick="openEditModal(this)">Szerkesztés</button></td>
+                <td>${sorszam}</td>
+                <td>${felveveDatum}</td>
+                <td>${raktar}</td>
+                <td>${kontirozas}</td>
+                <td>-</td>
+                <td><i class="fas fa-envelope not-sent" title="Levél küldése" onclick="sendEmailFromTable(this)"></i></td>
+                <td>${megnevezes}</td>
+                <td>${folyamat}</td>
+                <td>${szallito}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>${mennyiseg}</td>
+                <td>${egyseg}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            `;
+            tableBody.appendChild(newRow);
+            closeModal('newRecordModal');
+        }
+
+        function openEditModal(button) {
+            currentRow = button.parentElement.parentElement;
+            const cells = currentRow.cells;
+
+            document.getElementById('edit-row-index').value = Array.from(currentRow.parentElement.children).indexOf(currentRow);
+            document.getElementById('edit-rendeles-tipus').value = cells[5].textContent.includes('Terület') ? '3' : '2';
+            document.getElementById('edit-megnevezes').value = cells[8].textContent;
+            document.getElementById('edit-folyamat').value = cells[9].textContent;
+            document.getElementById('edit-szallito').value = cells[10].textContent;
+            document.getElementById('edit-ajanlatszam').value = cells[12].textContent === '-' ? '' : cells[12].textContent;
+            document.getElementById('edit-mennyiseg').value = cells[13].textContent;
+            document.getElementById('edit-egyseg').value = cells[14].textContent;
+            document.getElementById('edit-ar').value = cells[15].textContent === '-' ? '' : cells[15].textContent;
+            document.getElementById('edit-eur-huf').value = cells[16].textContent === '-' ? 'EUR' : cells[16].textContent;
+            document.getElementById('edit-bmig').value = cells[17].textContent === '-' ? '' : cells[17].textContent;
+            document.getElementById('edit-po').value = cells[18].textContent === '-' ? '' : cells[18].textContent;
+            document.getElementById('edit-t-szallitas').value = cells[19].textContent === '-' ? '' : cells[19].textContent;
+
+            updateEditRaktarField();
+            updateEditKontirozasField();
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function updateEditRaktarField() {
+            const raktarContainer = document.getElementById('edit-raktar-container');
+            raktarContainer.innerHTML = '';
+
+            const options = ['0060', '0350', '0110', '0560'];
+            const select = document.createElement('select');
+            select.id = 'edit-raktar';
+            select.name = 'edit-raktar';
+            select.required = true;
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+            raktarContainer.appendChild(select);
+            select.value = currentRow.cells[4].textContent;
+        }
+
+        function updateEditKontirozasField() {
+            const rendelesTipus = document.getElementById('edit-rendeles-tipus').value;
+            const kontirozasContainer = document.getElementById('edit-kontirozas-container');
+            kontirozasContainer.innerHTML = '';
+
+            if (rendelesTipus === '3') {
+                const teruletSelect = document.createElement('select');
+                teruletSelect.id = 'edit-terulet';
+                teruletSelect.name = 'edit-terulet';
+                teruletSelect.required = true;
+                teruletSelect.innerHTML = `
+                    <option value="Terület 1">Terület 1</option>
+                    <option value="Terület 2">Terület 2</option>
+                `;
+                teruletSelect.onchange = updateEditGepField;
+                kontirozasContainer.appendChild(teruletSelect);
+
+                const gepContainer = document.createElement('div');
+                gepContainer.id = 'edit-gep-container';
+                kontirozasContainer.appendChild(gepContainer);
+                updateEditGepField();
+            } else {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'edit-kontirozas';
+                input.name = 'edit-kontirozas';
+                input.required = true;
+                input.value = currentRow.cells[5].textContent;
+                kontirozasContainer.appendChild(input);
+            }
+        }
+
+        function updateEditGepField() {
+            const terulet = document.getElementById('edit-terulet').value;
+            const gepContainer = document.getElementById('edit-gep-container');
+            gepContainer.innerHTML = '';
+
+            const gepSelect = document.createElement('select');
+            gepSelect.id = 'edit-gep';
+            gepSelect.name = 'edit-gep';
+            gepSelect.required = true;
+            const gepek = teruletekGepek[terulet] || ['Gép 1', 'Gép 2'];
+            gepek.forEach(gep => {
+                const opt = document.createElement('option');
+                opt.value = gep;
+                opt.textContent = gep;
+                gepSelect.appendChild(opt);
+            });
+            gepContainer.appendChild(gepSelect);
+
+            const kontirozasText = currentRow.cells[5].textContent;
+            const match = kontirozasText.match(/Terület \d - (.*)/);
+            if (match) {
+                gepSelect.value = match[1];
+            }
+        }
+
+        function saveEdit() {
+            const rowIndex = document.getElementById('edit-row-index').value;
+            const rendelesTipus = document.getElementById('edit-rendeles-tipus').value;
+            const raktar = document.getElementById('edit-raktar').value;
+            const kontirozas = rendelesTipus === '3' ? `${document.getElementById('edit-terulet').value} - ${document.getElementById('edit-gep').value}` : document.getElementById('edit-kontirozas').value;
+            const megnevezes = document.getElementById('edit-megnevezes').value;
+            const folyamat = document.getElementById('edit-folyamat').value;
+            const szallito = document.getElementById('edit-szallito').value;
+            const ajanlatszam = document.getElementById('edit-ajanlatszam').value || '-';
+            const mennyiseg = document.getElementById('edit-mennyiseg').value;
+            const egyseg = document.getElementById('edit-egyseg').value;
+            const ar = document.getElementById('edit-ar').value || '-';
+            const eurHuf = document.getElementById('edit-eur-huf').value;
+            const bmig = document.getElementById('edit-bmig').value || '-';
+            const po = document.getElementById('edit-po').value || '-';
+            const tSzallitas = document.getElementById('edit-t-szallitas').value || '-';
+
+            const tableBody = document.querySelector('#logisztikai-table tbody');
+            const row = tableBody.children[rowIndex];
+            row.cells[4].textContent = raktar;
+            row.cells[5].textContent = kontirozas;
+            row.cells[8].textContent = megnevezes;
+            row.cells[9].textContent = folyamat;
+            row.cells[10].textContent = szallito;
+            row.cells[12].textContent = ajanlatszam;
+            row.cells[13].textContent = mennyiseg;
+            row.cells[14].textContent = egyseg;
+            row.cells[15].textContent = ar;
+            row.cells[16].textContent = eurHuf;
+            row.cells[17].textContent = bmig;
+            row.cells[18].textContent = po;
+            row.cells[19].textContent = tSzallitas;
+
+            closeModal('editModal');
+        }
+
+        function sendEmail() {
+            document.getElementById('email-result').textContent = 'Levél elküldve!';
+            currentRow.querySelector('.fa-envelope').classList.remove('not-sent');
+            currentRow.querySelector('.fa-envelope').classList.add('sent');
+            currentRow.setAttribute('data-ajanlatkikuldve', 'true');
+        }
+
+        function sendEmailFromTable(icon) {
+            const row = icon.parentElement.parentElement;
+            row.querySelector('.fa-envelope').classList.remove('not-sent');
+            row.querySelector('.fa-envelope').classList.add('sent');
+            row.setAttribute('data-ajanlatkikuldve', 'true');
         }
     </script>
 </body>
