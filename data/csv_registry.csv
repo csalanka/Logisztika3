@@ -1,2 +1,3 @@
-"CSV_fajl","oszlop 1","oszlop 2","oszlop 3","oszlop 4","oszlop 5","oszlop 6","oszlop 7","oszlop 8","oszlop 9"
-"gepek_adatbazis","Gép_ID","Terület","Gép neve","Belső rendelési szám","SAP költséghely szám","Gyártási szám","Gyártási év","Aktív","Szervíz"
+"CSV_fajl","oszlop 1","oszlop 2","oszlop 3","oszlop 4","oszlop 5","oszlop 6","oszlop 7","oszlop 8","oszlop 9","oszlop 10","oszlop 11","oszlop 12","oszlop 13","oszlop 14","oszlop 15","oszlop 16","oszlop 17","oszlop 18","oszlop 19","oszlop 20","oszlop 21"
+"gepek_adatbazis","Gép_ID","Terület","Gép neve","Belső rendelési szám","SAP költséghely szám","Gyártási szám","Gyártási év","Aktív","Szervíz","","","","","","","","","","","",""
+"szallitoi_cimjegyzek","Beszállító_ID","Ellenőrzés alatt","Cégnév:","Beszállító neve:","Wendor:","Cég címe:","Csomag fogadás cím:","WEB:","Központi elérés Név:","Központi elérés Email:","Központi elérés Tel:","Megszólítás:","Ajánlatkérés Név:","Ajánlatkérés Email:","Ajánlatkérés Tel:","Segítségnyújtás Név:","Segítségnyújtás Email:","Segítségnyújtás Tel:","Hibabejelentés Név:","Hibabejelentés Email:","Hibabejelentés Tel:"
