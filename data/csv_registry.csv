@@ -3,3 +3,4 @@
 "szallitoi_cimjegyzek","Beszállító_ID","Ellenőrzés alatt","Cégnév:","Beszállító neve:","Wendor:","Cég címe:","Csomag fogadás cím:","WEB:","Központi elérés Név:","Központi elérés Email:","Központi elérés Tel:","Megszólítás:","Ajánlatkérés Név:","Ajánlatkérés Email:","Ajánlatkérés Tel:","Segítségnyújtás Név:","Segítségnyújtás Email:","Segítségnyújtás Tel:","Hibabejelentés Név:","Hibabejelentés Email:","Hibabejelentés Tel:"
 "gyartok","Gyártó","","","","","","","","","","","","","","","","","","","",""
 "keretrendeles_adatbazis","Szállító","Terület","Kontírozás","Raktár","BMIg.","PO","Keretrendelés infó","","","","","","","","","","","","","",""
+"egyseg","Egység","","","","","","","","","","","","","","","","","","","",""
