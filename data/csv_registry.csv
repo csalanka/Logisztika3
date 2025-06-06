@@ -13,3 +13,4 @@
 "feladatkor","Feladatkör","","","","","","","","","","","","","","","","","","","",""
 "spec","Spec","","","","","","","","","","","","","","","","","","","",""
 "KT_Csomag_Anyagszamok","Gép_ID","Feladatkör","Spec","CS_Anyagszám","Anyagszám_ID","Egység","Mennyiség","","","","","","","","","","","","","",""
+"KT_Alkatreszek_Gepek","Anyagszám_ID","Gép_ID","","","","","","","","","","","","","","","","","","",""
