@@ -6,3 +6,4 @@
 "egyseg","Egység","","","","","","","","","","","","","","","","","","","",""
 "felhasznalo_kezeles","SR","Bejelentkező","Jelszó","Munkakőr","Felhasználói szerepkör","Jogosultság","Leírás","","","","","","","","","","","","","",""
 "foglalasok","SR","Dátum","Raktár","Mozgásnem","Anyagszám","Megnevezés","Gép / Terület","Rendelés","Mennyiség","Egység","Kivét / Bevét","","","","","","","","","",""
+"uzenofal","SR","Dátum","Bejelentkező","Észrevétel","","","","","","","","","","","","","","","","",""
